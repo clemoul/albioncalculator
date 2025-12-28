@@ -32,16 +32,20 @@
         ::-webkit-scrollbar-thumb { background: #3d2b1f; border: 2px solid #1a120b; }
     </style>
     <script type="importmap">
-    {
-      "imports": {
-        "react": "https://esm.sh/react@^19.2.3",
-        "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-        "react/": "https://esm.sh/react@^19.2.3/"
-      }
-    }
-    </script>
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom": "https://esm.sh/react-dom@^19.2.3",
+    "react-dom/client": "https://esm.sh/react-dom@^19.2.3/client",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
 </head>
 <body>
     <div id="root"></div>
+    <!-- CRITIQUE : Cette ligne permet de lancer l'application -->
+    <script type="module" src="./index.tsx"></script>
 </body>
 </html>

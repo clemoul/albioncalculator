@@ -5,7 +5,6 @@ import { FarmingData, CraftingData, CalculationResults } from './types';
 const SEEDS_TOTAL = 144;
 
 const App: React.FC = () => {
-  // --- Données initiales ---
   const [farming, setFarming] = useState<FarmingData>({
     seedPrice: 2500,
     seedsRecovered: 126,
@@ -21,15 +20,12 @@ const App: React.FC = () => {
     marketFoodPrice: 950,
   });
 
-  // --- Logique de calcul ---
   const results = useMemo((): CalculationResults => {
-    // Calculs Farming
     const seedsBought = Math.max(0, SEEDS_TOTAL - farming.seedsRecovered);
     const realCycleCost = seedsBought * farming.seedPrice;
     const costPerWheat = farming.wheatHarvested > 0 ? realCycleCost / farming.wheatHarvested : 0;
     const isProfitable = costPerWheat < farming.marketWheatPrice;
 
-    // Calculs Crafting
     const effectiveWheatConsumed = crafting.wheatPerCraft * (1 - (crafting.returnRate / 100));
     const realCraftCost = effectiveWheatConsumed * crafting.wheatPriceUsed;
     const costPerFood = crafting.foodPerCraft > 0 ? realCraftCost / crafting.foodPerCraft : 0;
@@ -56,7 +52,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-16 bg-[#1a120b] selection:bg-[#c5a059] selection:text-[#1a120b]">
-      {/* En-tête de Cuir */}
       <header className="bg-[#2d1f14] border-b-4 border-[#3d2b1f] py-8 px-6 shadow-2xl relative">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-6">
@@ -74,15 +69,8 @@ const App: React.FC = () => {
       </header>
 
       <main className="max-w-6xl mx-auto px-6 mt-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
-        
-        {/* Formulaires d'entrée (Scribe) */}
         <div className="lg:col-span-7 space-y-10">
-          
-          {/* Section Agriculture */}
-          <section className="bg-[#2d1f14] border-2 border-[#3d2b1f] p-8 rounded-sm shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-                <svg className="w-32 h-32" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" /></svg>
-            </div>
+          <section className="bg-[#2d1f14] border-2 border-[#3d2b1f] p-8 rounded-sm shadow-2xl relative">
             <h2 className="medieval-font text-[#c5a059] text-2xl mb-8 flex items-center gap-4 border-b border-[#3d2b1f] pb-4">
               <span className="text-[#8b6d31] font-serif italic text-3xl">I.</span> Terres Agricoles
             </h2>
@@ -94,11 +82,7 @@ const App: React.FC = () => {
             </div>
           </section>
 
-          {/* Section Artisanat */}
-          <section className="bg-[#2d1f14] border-2 border-[#3d2b1f] p-8 rounded-sm shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-                <svg className="w-32 h-32" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.533 1.533 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" /></svg>
-            </div>
+          <section className="bg-[#2d1f14] border-2 border-[#3d2b1f] p-8 rounded-sm shadow-2xl relative">
             <h2 className="medieval-font text-[#c5a059] text-2xl mb-8 flex items-center gap-4 border-b border-[#3d2b1f] pb-4">
               <span className="text-[#8b6d31] font-serif italic text-3xl">II.</span> Cuisine des Soupes
             </h2>
@@ -123,22 +107,16 @@ const App: React.FC = () => {
           </section>
         </div>
 
-        {/* Parchemin de résultats (Grimoire) */}
         <div className="lg:col-span-5">
           <div className="parchment-texture border-[10px] border-[#d9c5a0] p-10 min-h-[700px] relative text-[#2a1e17] parchment-font flex flex-col">
-            
             <div className="text-center mb-12 border-b-2 border-[#2a1e17]/20 pb-6">
               <h3 className="text-3xl font-bold uppercase tracking-tighter medieval-font text-[#5c4033]">Bilan du Scribe</h3>
               <p className="text-[11px] italic opacity-70 mt-1">Dressé en ce jour pour le maître du domaine</p>
             </div>
-
             <div className="space-y-10 flex-grow">
-              {/* Rapport Agricole */}
-              <div className="relative">
+              <div>
                 <h4 className="text-[10px] font-black text-[#8b4513] mb-5 uppercase tracking-[0.3em] flex items-center gap-3">
-                  <span className="h-px bg-[#8b4513]/20 grow"></span>
-                  L'Agriculture
-                  <span className="h-px bg-[#8b4513]/20 grow"></span>
+                  <span className="h-px bg-[#8b4513]/20 grow"></span>L'Agriculture<span className="h-px bg-[#8b4513]/20 grow"></span>
                 </h4>
                 <div className="space-y-4 text-base font-medium">
                   <div className="flex justify-between border-b border-[#2a1e17]/10 pb-1"><span>Semis acquis :</span> <span className="font-bold underline">{results.seedsBought} sacs</span></div>
@@ -152,13 +130,9 @@ const App: React.FC = () => {
                   </div>
                 </div>
               </div>
-
-              {/* Rapport de Cuisine */}
               <div className="relative pt-6 border-t border-[#2a1e17]/10">
                 <h4 className="text-[10px] font-black text-[#8b4513] mb-5 uppercase tracking-[0.3em] flex items-center gap-3">
-                  <span className="h-px bg-[#8b4513]/20 grow"></span>
-                  La Cuisine
-                  <span className="h-px bg-[#8b4513]/20 grow"></span>
+                  <span className="h-px bg-[#8b4513]/20 grow"></span>La Cuisine<span className="h-px bg-[#8b4513]/20 grow"></span>
                 </h4>
                 <div className="space-y-4 text-base font-medium">
                   <div className="flex justify-between border-b border-[#2a1e17]/10 pb-1"><span>Coût du bol :</span> <span className="font-bold underline">{results.costPerFood.toLocaleString()} s</span></div>
@@ -173,7 +147,6 @@ const App: React.FC = () => {
                 </div>
               </div>
             </div>
-
             <div className="mt-16 text-center">
               <div className="inline-block p-6 border-4 border-[#8b4513]/40 rounded-full medieval-font text-sm font-bold text-[#8b4513]/60 rotate-[-12deg] uppercase tracking-widest">
                 Sceau de l'Économe
@@ -182,7 +155,6 @@ const App: React.FC = () => {
           </div>
         </div>
       </main>
-
       <footer className="max-w-6xl mx-auto px-6 mt-16 text-center">
         <p className="text-[#3d2b1f] text-[10px] font-bold uppercase tracking-[0.5em]">Optimisé pour Albion Online • Édition Grimoire</p>
       </footer>
@@ -190,7 +162,6 @@ const App: React.FC = () => {
   );
 };
 
-// --- Composant de saisie médiéval ---
 interface InputGroupProps {
   label: string;
   value: number;
@@ -212,7 +183,7 @@ const InputGroup: React.FC<InputGroupProps> = ({ label, value, onChange, unit, m
             if (max !== undefined && val > max) onChange(max);
             else onChange(val);
           }}
-          className="w-full bg-[#1a120b] border-2 border-[#3d2b1f] rounded-sm py-3.5 px-4 text-[#f4e4bc] text-base font-bold focus:border-[#c5a059] focus:ring-4 focus:ring-[#c5a059]/5 transition-all outline-none"
+          className="w-full bg-[#1a120b] border-2 border-[#3d2b1f] rounded-sm py-3.5 px-4 text-[#f4e4bc] text-base font-bold focus:border-[#c5a059] transition-all outline-none"
         />
         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-[#8b6d31] uppercase opacity-60">
           {unit}
