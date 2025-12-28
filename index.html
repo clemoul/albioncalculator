@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grimoire de l'Économe - Albion Online</title>
+    <title>Calculateur Albion - Wheat & Soup</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Babel pour le support JSX/TS dans le navigateur -->
@@ -76,7 +76,7 @@
                             if (max !== undefined && val > max) onChange(max);
                             else onChange(val);
                         }}
-                        className="w-full wood-input rounded-sm py-3.5 px-4 text-base font-bold"
+                        className="w-full wood-input rounded-sm py-3 px-4 text-base font-bold"
                     />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-[#8b6d31] uppercase opacity-60">
                         {unit}
@@ -98,146 +98,157 @@
                 foodPerCraft: 10,
                 returnRate: 15,
                 wheatPriceUsed: 480,
-                marketFoodPrice: 950,
             });
 
             const results = useMemo(() => {
+                // Section 3 - Calculs Farming
                 const seedsBought = Math.max(0, SEEDS_TOTAL - farming.seedsRecovered);
                 const realCycleCost = seedsBought * farming.seedPrice;
                 const costPerWheat = farming.wheatHarvested > 0 ? realCycleCost / farming.wheatHarvested : 0;
-                const isProfitable = costPerWheat < farming.marketWheatPrice;
+                const diffMarket = farming.marketWheatPrice - costPerWheat;
+                const isFarmingProfitable = costPerWheat < farming.marketWheatPrice;
 
+                // Section 4 - Calculs Food
                 const effectiveWheatConsumed = crafting.wheatPerCraft * (1 - (crafting.returnRate / 100));
                 const realCraftCost = effectiveWheatConsumed * crafting.wheatPriceUsed;
                 const costPerFood = crafting.foodPerCraft > 0 ? realCraftCost / crafting.foodPerCraft : 0;
-                const foodMarketDiff = crafting.marketFoodPrice - costPerFood;
-                const isFoodProfitable = costPerFood < crafting.marketFoodPrice;
 
                 return {
                     seedsBought,
                     realCycleCost: Math.round(realCycleCost),
                     costPerWheat: Math.round(costPerWheat),
-                    diffMarket: Math.round(farming.marketWheatPrice - costPerWheat),
-                    isProfitable,
+                    diffMarket: Math.round(diffMarket),
+                    isFarmingProfitable,
                     effectiveWheatConsumed: Number(effectiveWheatConsumed.toFixed(2)),
                     realCraftCost: Math.round(realCraftCost),
-                    costPerFood: Math.round(costPerFood),
-                    foodMarketDiff: Math.round(foodMarketDiff),
-                    isFoodProfitable
+                    costPerFood: Math.round(costPerFood)
                 };
             }, [farming, crafting]);
 
-            const useFarmingCostInCraft = () => {
+            const bindWheatPrice = () => {
                 setCrafting(prev => ({ ...prev, wheatPriceUsed: results.costPerWheat }));
             };
 
             return (
                 <div className="min-h-screen pb-16 selection:bg-[#c5a059] selection:text-[#1a120b]">
-                    <header className="bg-[#2d1f14] border-b-4 border-[#3d2b1f] py-8 px-6 shadow-2xl relative overflow-hidden">
+                    <header className="bg-[#2d1f14] border-b-4 border-[#3d2b1f] py-6 px-6 shadow-2xl relative overflow-hidden">
                         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
                             <div className="flex items-center gap-6">
-                                <div className="bg-[#c5a059] p-4 rounded-sm border-2 border-[#8b6d31] shadow-[0_0_20px_rgba(197,160,89,0.3)] rotate-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-[#1a120b]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                <div className="bg-[#c5a059] p-3 rounded-sm border-2 border-[#8b6d31] shadow-[0_0_20px_rgba(197,160,89,0.3)]">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#1a120b]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                     </svg>
                                 </div>
                                 <div>
-                                    <h1 className="medieval-font text-4xl font-bold text-[#c5a059] tracking-widest uppercase drop-shadow-lg">Grimoire de l'Économe</h1>
-                                    <p className="text-[#8b6d31] text-[10px] font-bold tracking-[0.4em] uppercase mt-2 opacity-80">Registres Royaux d'Albion Online</p>
+                                    <h1 className="medieval-font text-3xl font-bold text-[#c5a059] tracking-widest uppercase">Économe d'Albion</h1>
+                                    <p className="text-[#8b6d31] text-[9px] font-bold tracking-[0.4em] uppercase mt-1 opacity-80">Calculateur Spécialisé - Blé & Soupe</p>
                                 </div>
                             </div>
                         </div>
                     </header>
 
-                    <main className="max-w-6xl mx-auto px-6 mt-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
-                        <div className="lg:col-span-7 space-y-10">
-                            <section className="bg-[#2d1f14] border-2 border-[#3d2b1f] p-8 rounded-sm shadow-2xl relative overflow-hidden">
-                                <h2 className="medieval-font text-[#c5a059] text-2xl mb-8 flex items-center gap-4 border-b border-[#3d2b1f] pb-4">
-                                    <span className="text-[#8b6d31] font-serif italic text-3xl">I.</span> Terres Agricoles
+                    <main className="max-w-6xl mx-auto px-6 mt-10 grid grid-cols-1 lg:grid-cols-12 gap-10">
+                        {/* ENTRÉES */}
+                        <div className="lg:col-span-7 space-y-8">
+                            {/* SECTION FARMING */}
+                            <section className="bg-[#2d1f14] border-2 border-[#3d2b1f] p-6 rounded-sm shadow-xl">
+                                <h2 className="medieval-font text-[#c5a059] text-xl mb-6 flex items-center gap-3 border-b border-[#3d2b1f] pb-3 uppercase tracking-wider">
+                                    ▶ Farming
                                 </h2>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <InputGroup label="Prix de la Graine" value={farming.seedPrice} onChange={(v) => setFarming({...farming, seedPrice: v})} unit="Silver" />
-                                    <InputGroup label="Graines Récupérées" value={farming.seedsRecovered} onChange={(v) => setFarming({...farming, seedsRecovered: v})} max={SEEDS_TOTAL} unit="u" />
-                                    <InputGroup label="Récolte de Blé" value={farming.wheatHarvested} onChange={(v) => setFarming({...farming, wheatHarvested: v})} unit="u" />
-                                    <InputGroup label="Prix Marché Blé" value={farming.marketWheatPrice} onChange={(v) => setFarming({...farming, marketWheatPrice: v})} unit="Silver" />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <InputGroup label="Prix unitaire d’une graine (silver)" value={farming.seedPrice} onChange={(v) => setFarming({...farming, seedPrice: v})} unit="Silver" />
+                                    <InputGroup label="Graines récupérées" value={farming.seedsRecovered} onChange={(v) => setFarming({...farming, seedsRecovered: v})} max={SEEDS_TOTAL} unit="u" />
+                                    <InputGroup label="Blés récoltés" value={farming.wheatHarvested} onChange={(v) => setFarming({...farming, wheatHarvested: v})} unit="u" />
+                                    <InputGroup label="Prix du blé sur le marché (silver)" value={farming.marketWheatPrice} onChange={(v) => setFarming({...farming, marketWheatPrice: v})} unit="Silver" />
                                 </div>
                             </section>
 
-                            <section className="bg-[#2d1f14] border-2 border-[#3d2b1f] p-8 rounded-sm shadow-2xl relative overflow-hidden">
-                                <h2 className="medieval-font text-[#c5a059] text-2xl mb-8 flex items-center gap-4 border-b border-[#3d2b1f] pb-4">
-                                    <span className="text-[#8b6d31] font-serif italic text-3xl">II.</span> Cuisine des Soupes
+                            {/* SECTION CRAFTING */}
+                            <section className="bg-[#2d1f14] border-2 border-[#3d2b1f] p-6 rounded-sm shadow-xl">
+                                <h2 className="medieval-font text-[#c5a059] text-xl mb-6 flex items-center gap-3 border-b border-[#3d2b1f] pb-3 uppercase tracking-wider">
+                                    ▶ Crafting Food (Wheat Soup)
                                 </h2>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div className="col-span-full space-y-2">
-                                        <div className="flex justify-between items-center">
-                                            <label className="text-[10px] font-bold text-[#8b6d31] uppercase tracking-widest">Coût du Blé utilisé</label>
-                                            <button onClick={useFarmingCostInCraft} className="text-[9px] text-[#c5a059] border border-[#c5a059]/30 px-3 py-1 rounded-sm hover:bg-[#c5a059]/10 transition-all font-bold">
-                                                LIER AU COÛT DU TERROIR
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="col-span-full mb-2">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <label className="text-[10px] font-bold text-[#8b6d31] uppercase tracking-widest">Prix du blé utilisé pour le calcul</label>
+                                            <button onClick={bindWheatPrice} className="text-[8px] bg-[#c5a059] text-[#1a120b] px-2 py-1 rounded-sm font-black hover:bg-white transition-colors uppercase">
+                                                Utiliser coût de mon farming
                                             </button>
                                         </div>
-                                        <div className="relative">
-                                            <input type="number" value={crafting.wheatPriceUsed} onChange={(e) => setCrafting({...crafting, wheatPriceUsed: parseFloat(e.target.value) || 0})} className="w-full wood-input rounded-sm py-4 px-5 text-lg font-bold" />
-                                            <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] text-[#8b6d31] font-black uppercase">Silver / u</span>
-                                        </div>
+                                        <input type="number" value={crafting.wheatPriceUsed} onChange={(e) => setCrafting({...crafting, wheatPriceUsed: parseFloat(e.target.value) || 0})} className="w-full wood-input rounded-sm py-3 px-4 text-base font-bold" />
                                     </div>
-                                    <InputGroup label="Prix Vente Soupe" value={crafting.marketFoodPrice} onChange={(v) => setCrafting({...crafting, marketFoodPrice: v})} unit="Silver" />
-                                    <InputGroup label="Taux de Retour (%)" value={crafting.returnRate} onChange={(v) => setCrafting({...crafting, returnRate: v})} unit="%" max={100} />
-                                    <InputGroup label="Blés par marmite" value={crafting.wheatPerCraft} onChange={(v) => setCrafting({...crafting, wheatPerCraft: v})} unit="u" />
-                                    <InputGroup label="Soupes obtenues" value={crafting.foodPerCraft} onChange={(v) => setCrafting({...crafting, foodPerCraft: v})} unit="u" />
+                                    <InputGroup label="Nombre de blés utilisés pour un craft" value={crafting.wheatPerCraft} onChange={(v) => setCrafting({...crafting, wheatPerCraft: v})} unit="u" />
+                                    <InputGroup label="Nombre de foods obtenues par craft" value={crafting.foodPerCraft} onChange={(v) => setCrafting({...crafting, foodPerCraft: v})} unit="u" />
+                                    <div className="md:col-span-2">
+                                        <InputGroup label="Return rate de crafting (%)" value={crafting.returnRate} onChange={(v) => setCrafting({...crafting, returnRate: v})} unit="%" max={100} />
+                                    </div>
                                 </div>
                             </section>
                         </div>
 
+                        {/* RÉSULTATS (Format de sortie obligatoire) */}
                         <div className="lg:col-span-5">
-                            <div className="parchment-texture p-10 min-h-[750px] relative text-[#2a1e17] parchment-font flex flex-col">
-                                <div className="text-center mb-12 border-b-2 border-[#2a1e17]/20 pb-6">
-                                    <h3 className="text-3xl font-bold uppercase tracking-tighter medieval-font text-[#5c4033]">Bilan du Scribe</h3>
-                                    <p className="text-[11px] italic opacity-70 mt-1">Dressé en ce jour pour le maître du domaine</p>
-                                </div>
-                                <div className="space-y-12 flex-grow">
-                                    <div className="relative">
-                                        <h4 className="text-[10px] font-black text-[#8b4513] mb-5 uppercase tracking-[0.3em] flex items-center gap-3">
-                                            <span className="h-px bg-[#8b4513]/20 grow"></span>L'Agriculture<span className="h-px bg-[#8b4513]/20 grow"></span>
-                                        </h4>
-                                        <div className="space-y-4 text-base font-medium">
-                                            <div className="flex justify-between border-b border-[#2a1e17]/10 pb-1"><span>Semis acquis :</span> <span className="font-bold underline">{results.seedsBought} sacs</span></div>
-                                            <div className="flex justify-between border-b border-[#2a1e17]/10 pb-1"><span>Dépense totale :</span> <span className="font-bold">{results.realCycleCost.toLocaleString()} s</span></div>
-                                            <div className="flex justify-between items-end mt-4">
-                                                <span className="text-xs uppercase font-bold opacity-70">Valeur de revient :</span>
-                                                <span className="text-2xl font-black">{results.costPerWheat.toLocaleString()} <span className="text-xs">s/u</span></span>
-                                            </div>
-                                            <div className={`mt-4 py-3 text-center rounded-sm border-2 text-[11px] font-black uppercase tracking-widest ${results.isProfitable ? 'bg-[#4a5d23]/10 border-[#4a5d23]/40 text-[#4a5d23]' : 'bg-red-900/10 border-red-900/40 text-red-900'}`}>
-                                                {results.isProfitable ? '✨ Terres Prospères' : '⚠️ Terres Stériles'}
-                                            </div>
-                                        </div>
+                            <div className="parchment-texture p-8 min-h-[800px] text-[#2a1e17] parchment-font flex flex-col">
+                                
+                                {/* FARMING RÉSUMÉ */}
+                                <div className="mb-10">
+                                    <div className="text-center mb-6">
+                                        <h3 className="medieval-font text-2xl font-bold uppercase border-y-2 border-[#2a1e17]/20 py-1">FARMING – RÉSUMÉ</h3>
                                     </div>
-                                    <div className="relative pt-6 border-t border-[#2a1e17]/10">
-                                        <h4 className="text-[10px] font-black text-[#8b4513] mb-5 uppercase tracking-[0.3em] flex items-center gap-3">
-                                            <span className="h-px bg-[#8b4513]/20 grow"></span>La Cuisine<span className="h-px bg-[#8b4513]/20 grow"></span>
-                                        </h4>
-                                        <div className="space-y-4 text-base font-medium">
-                                            <div className="flex justify-between border-b border-[#2a1e17]/10 pb-1"><span>Coût du bol :</span> <span className="font-bold underline">{results.costPerFood.toLocaleString()} s</span></div>
-                                            <div className="flex justify-between border-b border-[#2a1e17]/10 pb-1"><span>Prix d'étal :</span> <span className="font-bold">{crafting.marketFoodPrice.toLocaleString()} s</span></div>
-                                            <div className={`flex justify-between items-center mt-6 pt-4 border-t-4 border-[#2a1e17]/10 ${results.foodMarketDiff >= 0 ? 'text-[#4a5d23]' : 'text-red-900'}`}>
-                                                <span className="text-sm font-black uppercase">Bénéfice Net :</span>
-                                                <span className="text-3xl font-black drop-shadow-sm">{results.foodMarketDiff.toLocaleString()} <span className="text-xs">s/u</span></span>
+                                    <div className="space-y-2 text-sm font-bold">
+                                        <div className="flex justify-between"><span>Graines plantées :</span> <span>{SEEDS_TOTAL}</span></div>
+                                        <div className="flex justify-between"><span>Graines récupérées :</span> <span>{farming.seedsRecovered}</span></div>
+                                        <div className="flex justify-between"><span>Graines achetées :</span> <span>{results.seedsBought}</span></div>
+                                        <div className="flex justify-between"><span>Prix graine :</span> <span>{farming.seedPrice} silver</span></div>
+                                        <div className="flex justify-between border-t border-[#2a1e17]/20 pt-2 text-base">
+                                            <span>Coût réel du cycle :</span> <span>{results.realCycleCost.toLocaleString()} silver</span>
+                                        </div>
+                                        
+                                        <div className="pt-6 space-y-2">
+                                            <div className="flex justify-between"><span>Blés récoltés :</span> <span>{farming.wheatHarvested}</span></div>
+                                            <div className="flex justify-between text-blue-900"><span>Coût par blé :</span> <span>{results.costPerWheat} silver</span></div>
+                                            <div className="flex justify-between"><span>Prix marché du blé :</span> <span>{farming.marketWheatPrice} silver</span></div>
+                                            <div className="flex justify-between border-t border-[#2a1e17]/20 pt-2">
+                                                <span>Différence :</span> <span>{results.diffMarket} silver / blé</span>
                                             </div>
-                                            <div className={`mt-5 py-3 text-center rounded-sm border-2 text-[11px] font-black uppercase tracking-widest ${results.isFoodProfitable ? 'bg-[#4a5d23]/10 border-[#4a5d23]/40 text-[#4a5d23]' : 'bg-red-900/10 border-red-900/40 text-red-900'}`}>
-                                                {results.isFoodProfitable ? '🍲 Gastronomie Royale' : '🥄 Gamelle de Gueux'}
+                                            <div className={`mt-4 py-2 text-center text-sm uppercase tracking-widest border-2 ${results.isFarmingProfitable ? 'bg-green-800/10 border-green-800/40 text-green-800' : 'bg-red-800/10 border-red-800/40 text-red-800'}`}>
+                                                Conclusion : {results.isFarmingProfitable ? 'Farming rentable' : 'Farming non rentable'}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="mt-16 text-center opacity-40 select-none">
-                                    <div className="inline-block p-6 border-4 border-[#8b4513] rounded-full medieval-font text-sm font-bold text-[#8b4513] rotate-[-12deg] uppercase tracking-widest">
-                                        Sceau de l'Économe
+
+                                {/* CRAFT FOOD RÉSUMÉ */}
+                                <div>
+                                    <div className="text-center mb-6">
+                                        <h3 className="medieval-font text-2xl font-bold uppercase border-y-2 border-[#2a1e17]/20 py-1">CRAFT FOOD – WHEAT SOUP</h3>
+                                    </div>
+                                    <div className="space-y-2 text-sm font-bold">
+                                        <div className="flex justify-between"><span>Blés utilisés :</span> <span>{crafting.wheatPerCraft}</span></div>
+                                        <div className="flex justify-between"><span>Return rate :</span> <span>{crafting.returnRate} %</span></div>
+                                        <div className="flex justify-between text-blue-900"><span>Blés effectivement consommés :</span> <span>{results.effectiveWheatConsumed}</span></div>
+                                        
+                                        <div className="pt-6 space-y-2">
+                                            <div className="flex justify-between"><span>Foods obtenues :</span> <span>{crafting.foodPerCraft}</span></div>
+                                            <div className="flex justify-between"><span>Coût réel du craft :</span> <span>{results.realCraftCost.toLocaleString()} silver</span></div>
+                                            <div className="flex justify-between border-t-2 border-[#2a1e17]/20 pt-2 text-lg text-[#5c4033]">
+                                                <span>Coût de revient par food :</span> <span>{results.costPerFood.toLocaleString()} silver</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="mt-auto pt-10 text-center opacity-30 select-none">
+                                    <div className="inline-block p-4 border-4 border-[#8b4513] rounded-full medieval-font text-xs font-bold text-[#8b4513] rotate-[-10deg] uppercase tracking-widest">
+                                        Officiel Albion
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </main>
-                    <footer className="max-w-6xl mx-auto px-6 mt-16 text-center">
-                        <p className="text-[#3d2b1f] text-[10px] font-bold uppercase tracking-[0.5em]">Optimisé pour Albion Online • Édition Grimoire</p>
+                    <footer className="max-w-6xl mx-auto px-6 mt-12 text-center pb-8">
+                        <p className="text-[#3d2b1f] text-[9px] font-bold uppercase tracking-[0.5em]">Calculs exacts selon Section 3 & 4 du protocole</p>
                     </footer>
                 </div>
             );
