@@ -5,7 +5,6 @@ import { FarmingData, CraftingData, CalculationResults } from './types';
 const SEEDS_TOTAL = 144;
 
 const App: React.FC = () => {
-  // --- State ---
   const [farming, setFarming] = useState<FarmingData>({
     seedPrice: 2500,
     seedsRecovered: 126,
@@ -21,16 +20,13 @@ const App: React.FC = () => {
     marketFoodPrice: 950,
   });
 
-  // --- Calculations ---
   const results = useMemo((): CalculationResults => {
-    // Farming logic
     const seedsBought = Math.max(0, SEEDS_TOTAL - farming.seedsRecovered);
     const realCycleCost = seedsBought * farming.seedPrice;
     const costPerWheat = farming.wheatHarvested > 0 ? realCycleCost / farming.wheatHarvested : 0;
     const diffMarket = farming.marketWheatPrice - costPerWheat;
     const isProfitable = costPerWheat < farming.marketWheatPrice;
 
-    // Crafting logic (Uses crafting.wheatPriceUsed instead of farming result if desired)
     const effectiveWheatConsumed = crafting.wheatPerCraft * (1 - (crafting.returnRate / 100));
     const realCraftCost = effectiveWheatConsumed * crafting.wheatPriceUsed;
     const costPerFood = crafting.foodPerCraft > 0 ? realCraftCost / crafting.foodPerCraft : 0;
@@ -56,180 +52,138 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen pb-12 bg-slate-950">
-      {/* Header */}
-      <header className="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 py-4 px-4 sticky top-0 z-10 shadow-xl">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-amber-600 p-2 rounded-lg shadow-inner">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h1 className="text-lg font-black uppercase tracking-widest text-amber-500">Albion Calc</h1>
+    <div className="min-h-screen pb-12 bg-[#1a120b]">
+      {/* Header Médieval */}
+      <header className="bg-[#2d1f14] border-b-4 border-[#3d2b1f] py-8 px-4 shadow-2xl relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/leather.png')]"></div>
+        <div className="max-w-4xl mx-auto flex items-center gap-6">
+          <div className="bg-[#c5a059] p-3 rounded-sm border-2 border-[#8b6d31] shadow-[0_0_20px_rgba(197,160,89,0.2)]">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#1a120b]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          </div>
+          <div>
+            <h1 className="medieval-font text-3xl font-bold text-[#c5a059] tracking-widest uppercase">Livre de Comptes d'Albion</h1>
+            <p className="text-[#8b6d31] text-xs font-bold tracking-[0.3em] uppercase mt-1">Gestionnaire de Domaine & Cuisine</p>
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+      <main className="max-w-5xl mx-auto px-4 mt-10 grid grid-cols-1 lg:grid-cols-12 gap-10">
         
-        {/* Left Column: Inputs */}
-        <section className="space-y-6">
-          {/* Section 1 : Farming */}
-          <div className="bg-slate-900 border border-slate-800 p-5 rounded-xl shadow-lg">
-            <h2 className="text-amber-500 font-black mb-5 uppercase text-xs tracking-[0.2em] flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-amber-500 rotate-45" />
-              Farming (Cycle 144)
+        {/* Entrées (6 colonnes sur large) */}
+        <div className="lg:col-span-7 space-y-8">
+          
+          {/* Bloc Culture */}
+          <div className="bg-[#2d1f14] border-2 border-[#3d2b1f] p-6 rounded-sm shadow-xl relative group">
+            <div className="absolute -top-3 right-6 bg-[#3d2b1f] px-4 py-1 border border-[#c5a059]/40 text-[#c5a059] text-[10px] font-black uppercase">
+              Laboratoire de Terre
+            </div>
+            <h2 className="medieval-font text-[#c5a059] text-xl mb-6 flex items-center gap-3">
+              <span className="text-[#8b6d31]">I.</span> Culture du Blé
             </h2>
-            <div className="grid grid-cols-1 gap-4">
-              <InputGroup 
-                label="Prix unitaire graine" 
-                value={farming.seedPrice} 
-                onChange={(v) => setFarming({...farming, seedPrice: v})}
-                unit="Silver"
-              />
-              <InputGroup 
-                label="Graines récupérées" 
-                value={farming.seedsRecovered} 
-                onChange={(v) => setFarming({...farming, seedsRecovered: v})}
-                max={SEEDS_TOTAL}
-                unit="u"
-              />
-              <InputGroup 
-                label="Blés récoltés" 
-                value={farming.wheatHarvested} 
-                onChange={(v) => setFarming({...farming, wheatHarvested: v})}
-                unit="u"
-              />
-              <InputGroup 
-                label="Prix marché blé" 
-                value={farming.marketWheatPrice} 
-                onChange={(v) => setFarming({...farming, marketWheatPrice: v})}
-                unit="Silver"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <InputGroup label="Prix graine" value={farming.seedPrice} onChange={(v) => setFarming({...farming, seedPrice: v})} unit="Silver" />
+              <InputGroup label="Graines récupérées" value={farming.seedsRecovered} onChange={(v) => setFarming({...farming, seedsRecovered: v})} max={SEEDS_TOTAL} unit="u" />
+              <InputGroup label="Récolte totale" value={farming.wheatHarvested} onChange={(v) => setFarming({...farming, wheatHarvested: v})} unit="u" />
+              <InputGroup label="Prix Marché Blé" value={farming.marketWheatPrice} onChange={(v) => setFarming({...farming, marketWheatPrice: v})} unit="Silver" />
             </div>
           </div>
 
-          {/* Section 2 : Crafting */}
-          <div className="bg-slate-900 border border-slate-800 p-5 rounded-xl shadow-lg">
-            <h2 className="text-blue-500 font-black mb-5 uppercase text-xs tracking-[0.2em] flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-blue-500 rotate-45" />
-              Crafting : Wheat Soup
+          {/* Bloc Cuisine */}
+          <div className="bg-[#2d1f14] border-2 border-[#3d2b1f] p-6 rounded-sm shadow-xl relative group">
+             <div className="absolute -top-3 right-6 bg-[#3d2b1f] px-4 py-1 border border-[#6b8e23]/40 text-[#6b8e23] text-[10px] font-black uppercase">
+              Fourneaux Royaux
+            </div>
+            <h2 className="medieval-font text-[#c5a059] text-xl mb-6 flex items-center gap-3">
+              <span className="text-[#8b6d31]">II.</span> Soupe de Blé
             </h2>
-            <div className="grid grid-cols-1 gap-4">
-              <div className="space-y-1">
-                <div className="flex justify-between items-end">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase">Prix du blé utilisé</label>
-                    <button 
-                      onClick={useFarmingCostInCraft}
-                      className="text-[9px] text-indigo-400 hover:text-indigo-300 font-bold bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20"
-                    >
-                      UTILISER COÛT FARMING ({results.costPerWheat})
-                    </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-1.5 col-span-full">
+                <div className="flex justify-between items-center mb-1">
+                  <label className="text-[10px] font-bold text-[#8b6d31] uppercase">Coût du blé (matière)</label>
+                  <button onClick={useFarmingCostInCraft} className="text-[9px] text-[#c5a059] border border-[#c5a059]/20 px-2 py-0.5 rounded-sm hover:bg-[#c5a059]/5 transition-all">
+                    Utiliser coût récolte
+                  </button>
                 </div>
                 <div className="relative">
-                  <input 
-                    type="number"
-                    value={crafting.wheatPriceUsed}
-                    onChange={(e) => setCrafting({...crafting, wheatPriceUsed: parseFloat(e.target.value) || 0})}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg py-2.5 px-3 focus:ring-1 focus:ring-blue-500 text-sm font-bold"
-                  />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-600 font-bold uppercase">Silver</span>
+                  <input type="number" value={crafting.wheatPriceUsed} onChange={(e) => setCrafting({...crafting, wheatPriceUsed: parseFloat(e.target.value) || 0})} className="w-full bg-[#1a120b] border border-[#3d2b1f] rounded-sm py-3 px-4 text-[#f4e4bc] font-bold focus:border-[#c5a059] outline-none" />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-[#8b6d31] font-bold">SILVER</span>
                 </div>
               </div>
-
-              <InputGroup 
-                label="Prix de vente (Marché Soupe)" 
-                value={crafting.marketFoodPrice} 
-                onChange={(v) => setCrafting({...crafting, marketFoodPrice: v})}
-                unit="Silver"
-              />
-
-              <div className="grid grid-cols-2 gap-4">
-                <InputGroup label="Blés / Craft" value={crafting.wheatPerCraft} onChange={(v) => setCrafting({...crafting, wheatPerCraft: v})} unit="u" />
-                <InputGroup label="Soupes / Craft" value={crafting.foodPerCraft} onChange={(v) => setCrafting({...crafting, foodPerCraft: v})} unit="u" />
-              </div>
-              
-              <InputGroup 
-                label="Taux de retour (RRR)" 
-                value={crafting.returnRate} 
-                onChange={(v) => setCrafting({...crafting, returnRate: v})}
-                unit="%"
-                max={100}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* Right Column: Results */}
-        <section className="space-y-6">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 font-mono text-xs leading-relaxed shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-5">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
-
-            <div className="text-center mb-6 text-slate-500 font-bold uppercase tracking-widest border-b border-slate-800 pb-2">
-              Rapport Économique Albion
-            </div>
-            
-            <div className="mb-8">
-              <div className="text-slate-700 mb-1 font-bold tracking-tighter">──────────────</div>
-              <div className="text-amber-500 font-black uppercase text-[11px]">FARMING – RÉSUMÉ</div>
-              <div className="text-slate-700 mb-2 font-bold tracking-tighter">──────────────</div>
-              <div className="space-y-1">
-                <div className="flex justify-between"><span>Graines plantées</span> <span className="text-slate-300 font-bold">{SEEDS_TOTAL}</span></div>
-                <div className="flex justify-between"><span>Graines récupérées</span> <span className="text-slate-300">{farming.seedsRecovered}</span></div>
-                <div className="flex justify-between"><span>Graines achetées</span> <span className="text-white font-bold">{results.seedsBought}</span></div>
-                <div className="flex justify-between font-bold text-amber-500 mt-2 border-t border-slate-800 pt-1">
-                  <span>Coût réel cycle</span> <span>{results.realCycleCost.toLocaleString()} s</span>
-                </div>
-                <div className="mt-4 flex justify-between"><span>Blés récoltés</span> <span className="text-slate-300 font-bold">{farming.wheatHarvested}</span></div>
-                <div className="flex justify-between font-bold text-white text-[13px]">
-                  <span>Coût / Blé</span> <span>{results.costPerWheat.toLocaleString()} s</span>
-                </div>
-                <div className="flex justify-between text-slate-500 italic">
-                  <span>Prix marché</span> <span>{farming.marketWheatPrice.toLocaleString()} s</span>
-                </div>
-                <div className={`mt-2 text-center py-1.5 rounded text-[10px] font-black uppercase ${results.isProfitable ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'}`}>
-                   {results.isProfitable ? 'Farming rentable' : 'Farming non rentable'}
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <div className="text-slate-700 mb-1 font-bold tracking-tighter">──────────────</div>
-              <div className="text-blue-500 font-black uppercase text-[11px]">CRAFT FOOD – WHEAT SOUP</div>
-              <div className="text-slate-700 mb-2 font-bold tracking-tighter">──────────────</div>
-              <div className="space-y-1">
-                <div className="flex justify-between"><span>Blés utilisés (RRR incl.)</span> <span className="text-slate-300 font-bold">{results.effectiveWheatConsumed}</span></div>
-                <div className="flex justify-between"><span>Prix blé unité</span> <span className="text-slate-300">{crafting.wheatPriceUsed} s</span></div>
-                <div className="flex justify-between font-bold text-blue-500 mt-2 border-t border-slate-800 pt-1">
-                  <span>Coût réel craft</span> <span>{results.realCraftCost.toLocaleString()} s</span>
-                </div>
-                <div className="mt-4 flex justify-between font-bold text-white text-[13px]">
-                  <span>Coût revient / Food</span> <span>{results.costPerFood.toLocaleString()} s</span>
-                </div>
-                <div className="flex justify-between text-slate-500 italic">
-                  <span>Prix vente (Marché)</span> <span>{crafting.marketFoodPrice.toLocaleString()} s</span>
-                </div>
-                <div className={`flex justify-between font-black mt-2 pt-1 border-t border-slate-800 ${results.foodMarketDiff >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                  <span>Profit / unité</span> <span>{results.foodMarketDiff.toLocaleString()} s</span>
-                </div>
-                <div className={`mt-2 text-center py-1.5 rounded text-[10px] font-black uppercase ${results.isFoodProfitable ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'}`}>
-                   {results.isFoodProfitable ? 'Craft rentable' : 'Craft non rentable'}
-                </div>
+              <InputGroup label="Prix vente Soupe" value={crafting.marketFoodPrice} onChange={(v) => setCrafting({...crafting, marketFoodPrice: v})} unit="Silver" />
+              <InputGroup label="Taux retour (RRR)" value={crafting.returnRate} onChange={(v) => setCrafting({...crafting, returnRate: v})} unit="%" max={100} />
+              <InputGroup label="Blés par craft" value={crafting.wheatPerCraft} onChange={(v) => setFarming({...farming, seedPrice: v})} unit="u" hideLabel={true} />
+              <InputGroup label="Soupes par craft" value={crafting.foodPerCraft} onChange={(v) => setFarming({...farming, seedPrice: v})} unit="u" hideLabel={true} />
+              <div className="grid grid-cols-2 gap-4 col-span-full">
+                 <InputGroup label="Blés / Craft" value={crafting.wheatPerCraft} onChange={(v) => setCrafting({...crafting, wheatPerCraft: v})} unit="u" />
+                 <InputGroup label="Soupes / Craft" value={crafting.foodPerCraft} onChange={(v) => setCrafting({...crafting, foodPerCraft: v})} unit="u" />
               </div>
             </div>
           </div>
-        </section>
+        </div>
+
+        {/* Parchemin de résultats (5 colonnes sur large) */}
+        <div className="lg:col-span-5">
+          <div className="parchment-texture border-[12px] border-[#d9c5a0] p-10 shadow-[20px_20px_40px_rgba(0,0,0,0.5)] min-h-[600px] relative text-[#2a1e17] parchment-font">
+            <div className="text-center mb-10">
+              <h3 className="text-2xl font-bold border-b-2 border-[#2a1e17]/20 pb-4 mb-2">Grand Bilan</h3>
+              <p className="text-[10px] italic opacity-60">Fait à l'encre de seiche par le scribe royal</p>
+            </div>
+
+            <div className="space-y-8">
+              {/* Section Terre */}
+              <div>
+                <h4 className="text-xs font-bold text-[#8b4513] mb-4 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <span className="h-px bg-[#8b4513]/30 grow"></span>
+                  Rapport de Terre
+                  <span className="h-px bg-[#8b4513]/30 grow"></span>
+                </h4>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between"><span>Semis achetés :</span> <span className="font-bold underline">{results.seedsBought} u</span></div>
+                  <div className="flex justify-between"><span>Dépense totale :</span> <span className="font-bold">{results.realCycleCost.toLocaleString()} s</span></div>
+                  <div className="flex justify-between text-lg font-black mt-4 pt-4 border-t border-[#2a1e17]/10">
+                    <span>Prix de revient :</span> <span>{results.costPerWheat.toLocaleString()} s</span>
+                  </div>
+                  <div className={`mt-4 py-2 text-center rounded-sm border text-[10px] font-black uppercase ${results.isProfitable ? 'bg-[#4a5d23]/10 border-[#4a5d23]/30 text-[#4a5d23]' : 'bg-red-900/10 border-red-900/30 text-red-900'}`}>
+                    {results.isProfitable ? '📜 Culture Rentable' : '📜 Culture à perte'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Section Cuisine */}
+              <div>
+                <h4 className="text-xs font-bold text-[#8b4513] mb-4 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <span className="h-px bg-[#8b4513]/30 grow"></span>
+                  Rapport de Cuisine
+                  <span className="h-px bg-[#8b4513]/30 grow"></span>
+                </h4>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between"><span>Coût du bol :</span> <span className="font-bold">{results.costPerFood.toLocaleString()} s</span></div>
+                  <div className="flex justify-between"><span>Prix de vente :</span> <span className="font-bold">{crafting.marketFoodPrice.toLocaleString()} s</span></div>
+                  <div className={`flex justify-between text-xl font-black mt-4 pt-4 border-t-2 border-[#2a1e17]/10 ${results.foodMarketDiff >= 0 ? 'text-[#4a5d23]' : 'text-red-900'}`}>
+                    <span>Bénéfice Net :</span> <span>{results.foodMarketDiff.toLocaleString()} s</span>
+                  </div>
+                   <div className={`mt-4 py-2 text-center rounded-sm border text-[10px] font-black uppercase ${results.isFoodProfitable ? 'bg-[#4a5d23]/10 border-[#4a5d23]/30 text-[#4a5d23]' : 'bg-red-900/10 border-red-900/30 text-red-900'}`}>
+                    {results.isFoodProfitable ? '🍲 Soupe de Qualité Royale' : '🥄 Cuisine de Misère'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute bottom-8 left-0 right-0 text-center opacity-30 select-none">
+              <div className="inline-block p-4 border-4 border-[#8b4513] rounded-full medieval-font text-xs font-bold rotate-[-15deg]">
+                SCEAU ROYAL
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   );
 };
 
-// --- Helper Components ---
+// --- Composant Input Médieval ---
 
 interface InputGroupProps {
   label: string;
@@ -237,13 +191,14 @@ interface InputGroupProps {
   onChange: (val: number) => void;
   unit: string;
   max?: number;
+  hideLabel?: boolean;
 }
 
-const InputGroup: React.FC<InputGroupProps> = ({ label, value, onChange, unit, max }) => {
+const InputGroup: React.FC<InputGroupProps> = ({ label, value, onChange, unit, max, hideLabel }) => {
   return (
-    <div className="flex flex-col gap-1">
-      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">{label}</label>
-      <div className="relative">
+    <div className="flex flex-col gap-2">
+      {!hideLabel && <label className="text-[10px] font-bold text-[#8b6d31] uppercase tracking-wider">{label}</label>}
+      <div className="relative group">
         <input 
           type="number"
           value={value}
@@ -252,9 +207,9 @@ const InputGroup: React.FC<InputGroupProps> = ({ label, value, onChange, unit, m
             if (max !== undefined && val > max) onChange(max);
             else onChange(val);
           }}
-          className="w-full bg-slate-950 border border-slate-800 rounded-lg py-2.5 px-3 focus:outline-none focus:ring-1 focus:ring-slate-600 transition-all text-sm font-bold pr-16"
+          className="w-full bg-[#1a120b] border border-[#3d2b1f] rounded-sm py-3 px-4 text-[#f4e4bc] text-sm font-bold focus:border-[#c5a059] focus:ring-1 focus:ring-[#c5a059]/20 transition-all outline-none"
         />
-        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-600 uppercase">
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-bold text-[#8b6d31] uppercase pointer-events-none tracking-tighter">
           {unit}
         </span>
       </div>
